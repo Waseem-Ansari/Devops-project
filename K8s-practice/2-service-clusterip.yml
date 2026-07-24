@@ -1,0 +1,17 @@
+apiVersion: v1
+#type of resource we are creating
+kind: Service
+metadata:
+  name: flask-clusterip
+spec:
+#which pod this service sends traffic to
+#must match the labels of the pods we want to target
+  selector:
+    app: flask
+  ports:
+  #port that the service exposes
+    - port: 80
+    #port that the service sends traffic to on the pod
+      targetPort: 80
+# clusterIP only accessible within the cluster
+  type: ClusterIP
