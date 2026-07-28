@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Name of the ConfigMap
+  name: flask-config
+
+# key-value pairs to store configuration data
+data:
+  # database host - service name inside the cluster
+  DB_HOST: "postgres-db"
+
+  # database name
+  DB_NAME: "myapp"
+
+  # which environment the application is running in
+  APP_ENV: "production"
+
+  #app port
+  APP_PORT: "5000"

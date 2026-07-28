@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Name of the Deployment
+  name: flask-deployment-with-specific-config
+spec:
+  # Number of replicas (pods) to create
+  replicas: 1
+  selector:
+    matchLabels:
+      # Label to identify the pods managed by this deployment
+      app: flask-specific-app
+  template:
+    metadata:
+      labels:
+        # Label to identify the pods managed by this deployment
+        app: flask-specific-app
+    spec:
+      containers:
+        - name: flask-container
+          # Docker image to use for the container
+          image: nginx:alpine
+          env:
+            # Injecting specific environment variables from ConfigMap and Secret into the container
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  # Reference to the ConfigMap named "flask-config" to inject the value of the key "DB_HOST" as an environment variable
+                  name: flask-config
+                  key: DB_HOST
+            # Injecting secret values as environment variables into the container
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  # Reference to the Secret named "flask-secret" to inject the value
+                  name: flask-secret
+                  # Key to inject the value of the key "DB_PASSWORD" as an environment variable
+                  key: DB_PASSWORD
+            

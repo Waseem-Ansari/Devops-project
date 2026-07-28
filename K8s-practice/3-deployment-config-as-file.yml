@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Name of the Deployment
+  name: flask-deployment-config-as-file
+spec:
+  # Number of replicas (pods) to create
+  replicas: 1
+  selector:
+    matchLabels:
+      # Label to identify the pods managed by this deployment
+      app: flask-config-file-app
+  template:
+    metadata:
+      labels:
+        # Label to identify the pods managed by this deployment
+        app: flask-config-file-app
+    spec:
+      containers:
+        - name: flask-container
+          # Docker image to use for the container
+          image: nginx:alpine
+          volumeMounts:
+            # Mounting the ConfigMap as a volume inside the container
+            - name: config-volume
+            # where the ConfigMap will be mounted inside the container
+              mountPath: /etc/config
+      # Defining the volume that will hold the ConfigMap data
+      volumes:
+        # volume name  -must match the volumeMounts name    
+        - name: config-volume
+          configMap:
+            # Reference to the ConfigMap named "flask-config" to mount its data as files inside the container
+            name: flask-config
