@@ -1,0 +1,17 @@
+# API version for storage resources
+apiVersion: v1
+# we are creating a claim - request for storage
+kind: PersistentVolumeClaim
+metadata:
+  #name of the claim used to reference the claim in a deployment
+  name: postgres-pvc
+spec:
+  # ReadWriteOnce - one pod can read and write at a time
+  # Other options are ReadOnlyMany and ReadWriteMany
+  accessModes:
+    - ReadWriteOnce
+  # amount of storage requested
+  resources:
+    requests:
+      # asking for 1GB of storage
+      storage: 1Gi

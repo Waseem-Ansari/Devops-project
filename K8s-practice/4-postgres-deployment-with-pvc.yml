@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment-with-pvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-with-pvc
+  template:
+    metadata:
+      labels:
+        app: postgres-with-pvc
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:1.5
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "mypassword"
+            - name: POSTGRES_DB 
+              value: "myapp"  
+          ports:
+            - containerPort: 5432
+          #mount the volume into the container
+          volumeMounts:
+          # path inside the container where the volume will be mounted
+            - mountPath: /var/lib/postgresql/data
+          # name of the volume to mount  
+              name: postgres-storage
+
+      volumes:
+      # define the volume to be used by the container
+        - name: postgres-storage
+          persistentVolumeClaim:
+            # name of the claim created in 4-pvc.yml
+            claimName: postgres-pvc

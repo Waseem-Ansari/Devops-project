@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # this name become the hostname for the service and can be used by other pods to access this service
+  name: postgres-db
+
+spec:
+  # type of service - ClusterIP is default and exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster.
+  type: ClusterIP
+  # selector to identify the pods that will be part of this service
+  selector:
+    app: postgres-with-pvc
+  ports:
+    - port: 5432
+      targetPort: 5432
