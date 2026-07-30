@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-deployment
+
+spec:
+  # number of pods to run
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+        - name: flask
+          #image we pushed to dockerhub
+          image: iamwaseem9746/flask-k8s:latest
+          ports:
+            - containerPort: 5000
+          envFrom:
+            # flask config from configmap
+            - configMapRef:
+                name: flask-config
+            # flask secret from secret
+            - secretRef:
+                name: flask-secret  
+
+          # check flask is ready befor sending traffic
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            # wait 5 seconds before starting to check
+            initialDelaySeconds: 5
+            # check every 5 seconds
+            periodSeconds: 5  
+
+          # restart container if it stop responding
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            # wait 15 seconds before first liveness check
+            initialDelaySeconds: 15
+            # check every 10 seconds
+            periodSeconds: 10  

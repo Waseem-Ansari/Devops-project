@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    # one pod can read/write to the volume
+    - ReadWriteOnce
+  resources:
+    requests:
+      # request 1Gi of storage
+      storage: 1Gi

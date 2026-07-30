@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-config
+
+data:
+    # postgres service name = hostname flask uses 
+    DB_HOST: "postgres-service"
+    
+    # postgres database name
+    DB_NAME: "myapp"
+
+    # postgres username
+    DB_USER: "postgres"
+
+    # envrironment name
+    APP_NAME: "production"

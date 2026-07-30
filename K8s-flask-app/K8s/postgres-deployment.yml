@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  # only one replica - database dont scale like statless apps
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+
+          env:
+            # postgres password from secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: POSTGRES_PASSWORD
+            # database name from configmap
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: flask-config
+                  key: DB_NAME
+
+          ports:
+            - containerPort: 5432
+
+          volumeMounts:
+          # postgres data is stored in /var/lib/postgresql/data
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data   
+          # check postgres is ready befor marking healthy
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            # wait 5 seconds before starting to check
+            initialDelaySeconds: 5
+            # check every 5 seconds
+            periodSeconds: 5
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            # use the pvc we created in postgres-pvc.yml
+            claimName: postgres-pvc    
