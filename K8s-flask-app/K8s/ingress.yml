@@ -1,0 +1,36 @@
+#ingress requires networking API version v1, so we need to use the networking.k8s.io/v1 API version
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-ingress
+  annotations:
+    # Use this annotation to enable regular expressions in Nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # rewrite target removes path prefix from the request URL before forwarding it to the backend service
+    # /api/engineers becomes /engineers when forwarded to the backend service
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    # hostname - we will use minikube IP for local testing, but in production, you would use a domain name
+    - host: flask.local
+      http:
+        paths:
+          # route /api/* to the flask-service
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                # which service to route the request to
+                name: flask-service
+                port:
+                  number: 5000
+        
+          # route / to the flask service
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: flask-service
+                port:
+                  number: 5000

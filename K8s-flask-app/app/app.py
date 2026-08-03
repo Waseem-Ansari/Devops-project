@@ -54,7 +54,7 @@ def engineers():
         # insert a record
         cur.execute(
             "INSERT INTO engineers (name) VALUES (%s)",
-            (os.environ.get("APP_ENV", "unknown") + " engineer",)
+            (os.environ.get("APP_ENV", "Waseem") + " engineer",)
         )
         conn.commit()
  
