@@ -5,8 +5,7 @@ metadata:
 
 spec:
   # number of pods to run
-  replicas: 3
-
+  replicas: 2
   selector:
     matchLabels:
       app: flask
@@ -28,6 +27,21 @@ spec:
             # flask secret from secret
             - secretRef:
                 name: flask-secret  
+        # resource managemnent for container
+          resources:
+            requests:
+              # minimum CPU guaranteed to this pod
+              # 100m = 0.1 CPU Core (100m = 0.1 CPU Core (100 millicores)
+              cpu: "100m"
+              # minimum memory guaranteed to this pod
+              memory: "128Mi"
+            limits:
+              # maximum CPU this pod can use
+              # 500m = 0.5 CPU Core
+              cpu: "500m"
+              # maximum memory this pod can use - if it exceeds this limit, it will be killed
+              memory: "256Mi"
+
 
           # check flask is ready befor sending traffic
           readinessProbe:

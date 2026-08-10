@@ -31,6 +31,18 @@ spec:
                   name: flask-config
                   key: DB_NAME
 
+          resources:
+            requests:
+              # minimum CPU guaranteed to this pod
+              cpu: "250m"
+              # minimum memory guaranteed to this pod
+              memory: "256Mi"
+            limits:
+              # maximum CPU this pod can use
+              cpu: "1000m"
+              # maximum memory this pod can use - if it exceeds this limit, it will be killed
+              memory: "512Mi"          
+
           ports:
             - containerPort: 5432
 
