@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: dev-quota
+  # namespace where the quota is applied
+  namespace: dev
+spec:
+  hard:
+    # maximum number of pods that can be created in the namespace
+    pods: "10"
+    # total CPU request that across all pods in the namespace cannot exceed
+    requests.cpu: "2"
+    # total memory request that across all pods in the namespace cannot exceed
+    requests.memory: "2Gi"
+    # total CPU limit that across all pods in the namespace cannot exceed
+    limits.cpu: "4"
+    # total memory limit that across all pods in the namespace cannot exceed
+    limits.memory: "4Gi"
