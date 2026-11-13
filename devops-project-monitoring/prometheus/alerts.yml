@@ -1,0 +1,35 @@
+#rules are organized into named groups.
+#the name of the group is used as a label on each alert.
+groups:
+  - name: basic-alerts
+    rules:
+      #the alert’s name
+      - alert: TargetDown
+      #a PromQL condition. When it returns results, the alert is active. up == 0 matches every target that failed its last scrape.
+        expr: up == 0
+      #the condition must stay true for 1 minute before the alert fires. During that time the alert is Pending. This prevents a single failed scrape or a short CPU spike from waking someone up.
+        for: 1m
+      #extra tags, such as severity, used for routing later.  
+        labels:
+          severity: critical
+      #human-readable text
+        annotations:
+      #label.job and label.instance are automatically added to the alert by Prometheus. You can use them in your summary or description.
+      #{{ $labels.job }} inserts the label value from the matching series.
+          summary: "{{ $labels.job }} target {{ $labels.instance }} is down"
+
+      - alert: HighCPU
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU above 80% on {{ $labels.instance }}"
+
+      - alert: LowMemory
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Less than 10% memory available on {{ $labels.instance }}"

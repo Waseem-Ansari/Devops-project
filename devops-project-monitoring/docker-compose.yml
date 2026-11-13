@@ -6,6 +6,7 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
 
   node-exporter:
     image: prom/node-exporter:v1.8.2
@@ -28,7 +29,13 @@ services:
       - grafana-data:/var/lib/grafana
     depends_on:
       - prometheus
-
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./alertmanager/slack_webhook:/etc/alertmanager/slack_webhook:ro
 volumes:
   prometheus-data:
   grafana-data:

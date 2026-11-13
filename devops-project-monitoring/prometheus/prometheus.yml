@@ -1,5 +1,15 @@
 global:
   scrape_interval: 15s
+#points to the rules file as it appears inside the container.
+rule_files:
+  - /etc/prometheus/alerts.yml
+#alerting configuration. This is where you tell Prometheus where to send alerts when they fire.
+#alermanager is a separate service that handles alerts sent by Prometheus. It can send emails, Slack messages, or other notifications.
+#alertmanager:9093 uses the container name as hostname, same Docker DNS idea as before.
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
 
 scrape_configs:
   - job_name: prometheus

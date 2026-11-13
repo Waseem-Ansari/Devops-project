@@ -1,0 +1,23 @@
+#route.receiver: where alerts go by default.
+route:
+  receiver: slack
+#group_by: ['alertname']: alerts with the same name are bundled into one message. If 5 targets go down, you get one message listing them, not 5 pings.  
+  group_by: ['alertname']
+#group_wait: 10s: after the first alert arrives, wait 10 seconds to collect related alerts before sending.  
+  group_wait: 10s
+#group_interval: 1m: if new alerts arrive while waiting, wait up to 1 minutes before sending. This prevents alert storms.
+  group_interval: 1m
+#repeat_interval: 4h: if an alert is still firing after 4 hours, send a new notification. This is useful for long-lasting problems that need attention.  
+  repeat_interval: 4h
+
+receivers:
+  - name: slack
+    slack_configs:
+#api_url_file: /etc/alertmanager/slack_webhook: the Slack webhook URL is stored in a file inside the container. This is a secret, so it’s not checked into GitHub.    
+      - api_url_file: /etc/alertmanager/slack_webhook
+#send_resolved: true: when an alert resolves, send a notification to Slack. This is useful for knowing when a problem is fixed.
+        send_resolved: true
+#title / text: Go templates that build the message.        
+#title: '{{ .Status | toUpper }}: {{ .CommonLabels.alertname }}': the message title is the alert name and its status (firing or resolved).
+        title: '{{ .Status | toUpper }}: {{ .CommonLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}{{ "\n" }}{{ end }}'
